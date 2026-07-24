@@ -1,0 +1,116 @@
+
+FOODPANDA SQL PROJECT
+
+Project Title: FoodPanda Sales & Supplier Analytics System
+
+OBJECTIVE
+Analyze Monthly Revenue, Orders, Customers, Suppliers, Categories, Cities, Regions and Order Status using SQL.
+
+DATABASE
+CREATE DATABASE FoodPandaDB;
+USE FoodPandaDB;
+
+TABLES
+
+1. Customers
+CREATE TABLE Customers
+(
+Customer_ID INT PRIMARY KEY,
+Customer_Name VARCHAR(100),
+Gender VARCHAR(10),
+Age INT,
+Phone VARCHAR(20),
+City_ID INT
+);
+
+2. Cities
+CREATE TABLE Cities
+(
+City_ID INT PRIMARY KEY,
+City_Name VARCHAR(50),
+Region VARCHAR(30)
+);
+
+3. Categories
+CREATE TABLE Categories
+(
+Category_ID INT PRIMARY KEY,
+Category_Name VARCHAR(50)
+);
+
+4. Products
+CREATE TABLE Products
+(
+Product_ID INT PRIMARY KEY,
+Product_Name VARCHAR(100),
+Category_ID INT,
+Price DECIMAL(10,2)
+);
+
+5. Suppliers
+CREATE TABLE Suppliers
+(
+Supplier_ID INT PRIMARY KEY,
+Supplier_Name VARCHAR(100),
+City_ID INT,
+Status VARCHAR(20),
+Active_Since DATE
+);
+
+6. Orders
+CREATE TABLE Orders
+(
+Order_ID INT PRIMARY KEY,
+Customer_ID INT,
+Supplier_ID INT,
+Order_Date DATE,
+Status VARCHAR(20),
+Payment_Method VARCHAR(30),
+Delivery_Time INT
+);
+
+7. Order_Details
+CREATE TABLE Order_Details
+(
+Order_Detail_ID INT PRIMARY KEY,
+Order_ID INT,
+Product_ID INT,
+Quantity INT,
+Unit_Price DECIMAL(10,2),
+Discount DECIMAL(5,2)
+);
+
+KPI QUERIES
+
+Total Revenue
+SELECT SUM((Quantity*Unit_Price)-Discount) AS TotalRevenue
+FROM Order_Details;
+
+Total Orders
+SELECT COUNT(*) TotalOrders
+FROM Orders;
+
+Active Suppliers
+SELECT COUNT(*)
+FROM Suppliers
+WHERE Status='Active';
+
+Revenue by Category
+SELECT Category_Name,
+SUM((Quantity*Unit_Price)-Discount) Revenue
+FROM Categories C
+JOIN Products P ON C.Category_ID=P.Category_ID
+JOIN Order_Details OD ON P.Product_ID=OD.Product_ID
+GROUP BY Category_Name
+ORDER BY Revenue DESC;
+
+Top 10 Suppliers
+SELECT TOP 10 Supplier_Name,
+SUM((Quantity*Unit_Price)-Discount) Revenue
+FROM Suppliers S
+JOIN Orders O ON S.Supplier_ID=O.Supplier_ID
+JOIN Order_Details OD ON O.Order_ID=OD.Order_ID
+GROUP BY Supplier_Name
+ORDER BY Revenue DESC;
+
+END OF PROJECT
